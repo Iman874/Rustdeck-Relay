@@ -1,0 +1,73 @@
+version: "3"
+services:
+  hbbs:
+    container_name: hbbs
+    image: rustdesk/rustdesk-server:latest
+    command: hbbs -r ${DOMAIN_NAME}:21117
+    restart: unless-stopped
+
+    ports:
+      - 21115:21115
+      - 21116:21116
+      - 21116:21116/udp
+      - 21118:21118
+    volumes:
+      - ./data:/root
+    networks:
+      - rustdesk-net
+    depends_on:
+      - hbbr
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=rustdesk-net"
+
+      ## HTTP Routers
+#      - "traefik.http.routers.rustdeck-secure.entrypoints=websecure"
+#      - "traefik.http.routers.rustdeck-secure.rule=Host(`$DOMAIN_NAME`)"
+#      - "traefik.http.routers.rustdeck-secure.service=rustdeck"
+#      - "traefik.http.routers.rustdeck-secure.tls.certresolver=letsencrypt"
+
+        ## Middlewares
+      #- "traefik.http.middlewares=secureHeaders@file"
+#      - "traefik.http.middlewares.custom.headers.sslredirect=true"
+      ## HTTP Services
+#      - "traefik.http.services.rustdeck.loadbalancer.server.port=8080"
+
+
+
+  hbbr:
+    container_name: hbbr
+    image: rustdesk/rustdesk-server:latest
+    command: hbbr
+    restart: unless-stopped
+
+    ports:
+      - 21117:21117
+      - 21119:21119
+    volumes:
+      - ./data:/root
+    networks:
+      - rustdesk-net
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=rustdesk-net"
+
+      ## HTTP Routers
+#      - "traefik.http.routers.rustdeck-secure.entrypoints=websecure"
+#      - "traefik.http.routers.rustdeck-secure.rule=Host(`$DOMAIN_NAME`)"
+#      - "traefik.http.routers.rustdeck-secure.service=rustdeck"
+#      - "traefik.http.routers.rustdeck-secure.tls.certresolver=letsencrypt"
+
+        ## Middlewares
+      #- "traefik.http.middlewares=secureHeaders@file"
+#      - "traefik.http.middlewares.custom.headers.sslredirect=true"
+      ## HTTP Services
+#      - "traefik.http.services.rustdeck.loadbalancer.server.port=8080"
+
+
+
+networks:
+  rustdesk-net:
+    external: false
